@@ -16,14 +16,29 @@ int main( int argc, char *argv[] ) {
     ifstream keyFile = validateArgument<ifstream>(argv[4], KeyFile);
     string modeOp = validateArgument<string>(argv[5], ModeOp);
 
-    
+    if(modeOp == "E") {
+        if(cipherType == "B") {
+            blockEncrypt();
+        }
+        else {
+            streamEncrypt();
+        }
+    }
+    else {
+        if(cipherType == "B") {
+            blockDecrypt();
+        }
+        else {
+            streamDecrypt();
+        }
+    }
 
 }
 
 void blockEncrypt() {
 
 }
-void blockDecrupt() {
+void blockDecrypt() {
 
 }
 
@@ -31,7 +46,7 @@ void streamEncrypt() {
 
 }
 void streamDecrypt() {
-    
+
 }
 
 template <typename T>
