@@ -1,60 +1,49 @@
 #include "ArgValidator.h"
+#include "BlockCipher.h"
+#include "StreamCipher.h"
 
 #include <iostream> // cout
 #include <fstream> // ifstream
 #include <stdexcept> // runtime_error
 #include <string> // strings
+#include <memory> // unique_ptr
+
+Cipher* getCipher(const string &cipherType, const ifstream &keyFile);
+void printUsage(char* programName);
 
 using namespace std;
-using namespace ArgValidator;
 
 
 int main( int argc, char *argv[] ) {
-    if( argc != 5 ) printUsage(argv[0]);
+    if( argc != 6 ) printUsage(argv[0]);
 
-    string cipherType = validateArgument<string>(argv[1], CipherType);
-    ifstream inputFile = validateArgument<ifstream>(argv[2], FileName);
-    ofstream outputFile = validateArgument<ofstream>(argv[3], OutputFile);
-    ifstream keyFile = validateArgument<ifstream>(argv[4], KeyFile);
-    string modeOp = validateArgument<string>(argv[5], ModeOp);
+    string cipherType = validateArgument<CipherType>(argv[1]);
+    ifstream inputFile = validateArgument<InputFile>(argv[2]);
+    ofstream outputFile = validateArgument<OutputFile>(argv[3]);
+    string modeOp = validateArgument<ModeOp>(argv[5]);
+    ifstream keyFile = validateArgument<KeyFile>(argv[4]);
+
+    unique_ptr<Cipher> cipher(getCipher(cipherType, keyFile));
 
     if(modeOp == "E") {
-        if(cipherType == "B") {
-            blockEncrypt();
-        }
-        else {
-            streamEncrypt();
-        }
+        cipher -> encrypt(inputFile, outputFile);
     }
     else {
-        if(cipherType == "B") {
-            blockDecrypt();
-        }
-        else {
-            streamDecrypt();
-        }
+        cipher -> decrypt(inputFile, outputFile);
     }
-
 }
 
-void blockEncrypt() {
-
-}
-void blockDecrypt() {
-
-}
-
-void streamEncrypt() {
-
-}
-void streamDecrypt() {
-
+Cipher* getCipher(const string &cipherType, const ifstream &keyFile) {
+    if(cipherType == "B") {
+        return new BlockCipher(keyFile);
+    }
+    else {
+        return new StreamCipher(keyFile);
+    }
 }
 
 void printUsage(char* programName) {
     throw runtime_error("[USAGE] " + string(programName)  + 
                     " [CipherType: B or S] [InputFileName] [OutputFileName] [KeyFile] [ModeOfOperation: E or D]\n");
 }
-
-
 

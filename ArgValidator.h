@@ -4,72 +4,63 @@
 #include <string>
 #include <stdexcept>
 #include <iostream>
-#include <ifstream>
+#include <fstream>
 
-enum ArgType { CipherType, FileName, OutputFile, KeyFile, ModeOp };
+enum ArgType { CipherType, InputFile, OutputFile, KeyFile, ModeOp };
 
-class ArgValidator {
-public:
+using namespace std;
 
-template <typename T>
-    static T validateArgument(const char* arg, ArgType argType) {
-        string argument(arg);
+template <ArgType A>
+auto validateArgument(const char* arg);
 
-        switch(argType) {
+template <>
+auto validateArgument<CipherType>(const char* arg) {
+    string argument(arg);
 
-            case CipherType:
-                if(argument != "B" || argument != "S")
-                    throw runtime_error("Cipher Type must be either \"B\" for Block Cipher or \"S\" for Stream Cipher.\n");
-                return argument;
+    if(argument != "B" && argument != "S")
+        throw runtime_error("Cipher Type must be either \"B\" for Block Cipher or \"S\" for Stream Cipher.\n"s
+                            + "You Entered: "s + argument + "\n"s);
 
-            case FileName:
-                ifstream inputFile(argument);
-                if( !inputFile ) {
-                    throw runtime_error("Input File does not exist.");
-                }
-                return inputFile;
-                break;
-
-            case OutputFile:
-                ofstream outputFile(argument);
-                return outputFile;
-                break;
-
-            case KeyFile:
-                ifstream keyFile(arguement);
-                if( !inputFile ) {
-                    throw runtime_error("Key File does not exist.");
-                }
-                return keyFile;
-                break;
-
-            case ModeOp:
-                if(argument != "E" || argument != "D")
-                    throw runtime_error("Mode Of Operation must be either \"E\" for Encrypt or \"D\" for Decrypt.\n");
-                return argument;
-                break;
-
-        }
-    }
-
-private:
-
-    ifstream validateIfstream(ArgType argType) {
-
-    }
-
-    ofstream validateOfstream(ArgType argType) {
-
-    }
-
-    string validateModeOp() {
-
-    }
-    string validateCipherType() {
-
-    }
-
+    return argument;
 }
 
+template <>
+auto validateArgument<InputFile>(const char* arg) {
+    string argument(arg);
+
+    ifstream inputFile(argument, ios_base::binary);
+    if( !inputFile ) {
+        throw runtime_error("Input File does not exist.");
+    }
+    return inputFile;
+}
+
+template <>
+auto validateArgument<OutputFile>(const char* arg) {
+    string argument(arg);
+
+    ofstream outputFile(argument, ios_base::binary);
+    return outputFile;
+}
+
+template <>
+auto validateArgument<KeyFile>(const char* arg) {
+    string argument(arg);
+
+    ifstream keyFile(argument, ios_base::binary);
+    if( !keyFile ) {
+        throw runtime_error("Key File does not exist.");
+    }
+    return keyFile;
+}
+
+template <>
+auto validateArgument<ModeOp>(const char* arg) {
+    string argument(arg);
+
+    if(argument != "E" && argument != "D")
+        throw runtime_error("Mode Of Operation must be either \"E\" for Encrypt or \"D\" for Decrypt.\n");
+    return argument;
+}
 
 #endif
