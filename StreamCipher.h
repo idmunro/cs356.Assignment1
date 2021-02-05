@@ -4,12 +4,11 @@
 #include "Cipher.h"
 
 class StreamCipher : public Cipher {
+        const std::string key;
     public:
-        StreamCipher(std::ifstream &keyFile);
-        void encrypt(std::ifstream &inputFile, std::ofstream &outputFile);
-        void decrypt(std::ifstream &inputFile, std::ofstream &outputFile);
-    private:
-        std::ifstream &keyFile;
+        StreamCipher(const std::string &keyFileName);
+        void encrypt(const std::string &inputFileName, const std::string &outputFileName) const;
+        void decrypt(const std::string &inputFileName, const std::string &outputFileName) const;
 };
 
 #endif

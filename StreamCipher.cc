@@ -1,15 +1,14 @@
 #include "StreamCipher.h"
-#include <iostream>
 
 using std::ifstream;
 using std::ofstream;
 using std::string;
 
-StreamCipher::StreamCipher(ifstream &keyFile) : keyFile(keyFile) {}
+StreamCipher::StreamCipher(const string &keyFileName): key(extractKey(keyFileName)) {}
 
-// Change to read through character by character to reduce memory size
-void StreamCipher::encrypt(ifstream &inputFile, ofstream &outputFile) {
-    string key = fileToString(keyFile);
+void StreamCipher::encrypt(const std::string &inputFileName, const std::string &outputFileName) const{
+    ifstream inputFile = openInputFile(inputFileName);
+    ofstream outputFile = openOutputFile(outputFileName);
     string data = fileToString(inputFile);
 
     size_t keyIndex = 0;
@@ -20,6 +19,6 @@ void StreamCipher::encrypt(ifstream &inputFile, ofstream &outputFile) {
     }
 }
 
-void StreamCipher::decrypt(ifstream &inputFile, ofstream &outputFile) {
-    encrypt(inputFile, outputFile);
+void StreamCipher::decrypt(const std::string &inputFileName, const std::string &outputFileName) const{
+    encrypt(inputFileName, outputFileName);
 }

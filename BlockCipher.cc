@@ -1,46 +1,47 @@
 #include "BlockCipher.h"
-#include <algorithm> // swap
-#include <iostream> // cout
 
 using std::ifstream;
 using std::ofstream;
 using std::string;
 using std::swap;
-using std::cout;
-using std::endl;
 
-BlockCipher::BlockCipher(ifstream &keyFile): keyFile(keyFile) {}
+BlockCipher::BlockCipher(const string &keyFileName): key(extractKey(keyFileName)){}
 
-void BlockCipher::encrypt(ifstream &inputFile, ofstream &outputFile) {
-    const string key = fileToString(keyFile);
+void BlockCipher::encrypt(const std::string &inputFileName, const std::string &outputFileName) const{
+    ifstream inputFile = openInputFile(inputFileName);
+    ofstream outputFile = openOutputFile(outputFileName);
     string data = fileToString(inputFile);
-    
-    size_t padLength = findPaddingLength(data);
-    data.insert(data.size(), padLength, PAD_CHARACTER);
 
-    for(size_t i = 0; i < data.size(); i += BLOCKSIZE) {
-        string block = data.substr(i, BLOCKSIZE);
-        encryptBlock(block, key);
-        data.replace(i, BLOCKSIZE, block, 0, BLOCKSIZE);
-    }
-
+    addPadding(data);
+    encryptData(data, key);
     swapBytes(data, key);
+
     outputFile.write(data.c_str(), data.size());
 }
 
-void BlockCipher::decrypt(ifstream &inputFile, ofstream &outputFile) {
-    const string key = fileToString(keyFile);
+void BlockCipher::decrypt(const std::string &inputFileName, const std::string &outputFileName) const{
+    ifstream inputFile = openInputFile(inputFileName);
+    ofstream outputFile = openOutputFile(outputFileName);
     string data = fileToString(inputFile);
+    
     swapBytes(data, key);
+    encryptData(data, key);
+    removePadding(data);
+    
+    outputFile.write(data.c_str(), data.size());
+}
 
+void BlockCipher::addPadding(string &data) const{
+    size_t padLength = findPaddingLength(data);
+    data.insert(data.size(), padLength, PAD_CHARACTER);
+}
+
+void BlockCipher::encryptData(string &data, const string &key) const{
     for(size_t i = 0; i < data.size(); i += BLOCKSIZE) {
         string block = data.substr(i, BLOCKSIZE);
         encryptBlock(block, key);
         data.replace(i, BLOCKSIZE, block, 0, BLOCKSIZE);
     }
-
-    removePadding(data);
-    outputFile.write(data.c_str(), data.size());
 }
 
 void BlockCipher::swapBytes(string &data, const string &key) const{
@@ -49,16 +50,6 @@ void BlockCipher::swapBytes(string &data, const string &key) const{
             swap(data[f], data[r]);
         }
     }
-}
-
-void BlockCipher::encryptBlock(string &block, const string &key) const{
-    for(size_t i = 0; i < BLOCKSIZE; ++i) {
-        block[i] ^= key[i];
-    }
-}
-
-size_t BlockCipher::findPaddingLength(const string &data) const{
-    return (data.size() % BLOCKSIZE) ? (BLOCKSIZE - (data.size() % BLOCKSIZE)) : 0;
 }
 
 void BlockCipher::removePadding(string &data) const{
@@ -74,3 +65,12 @@ void BlockCipher::removePadding(string &data) const{
     data.erase(data.end()-padLength + 1, data.end());
 }
 
+void BlockCipher::encryptBlock(string &block, const string &key) const{
+    for(size_t i = 0; i < BLOCKSIZE; ++i) {
+        block[i] ^= key[i];
+    }
+}
+
+size_t BlockCipher::findPaddingLength(const string &data) const{
+    return (data.size() % BLOCKSIZE) ? (BLOCKSIZE - (data.size() % BLOCKSIZE)) : 0;
+}
