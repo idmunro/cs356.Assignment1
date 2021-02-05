@@ -12,10 +12,10 @@ class BlockCipher : public Cipher {
         void encrypt(std::ifstream &inputFile, std::ofstream &outputFile);
         void decrypt(std::ifstream &inputFile, std::ofstream &outputFile);
     private:
-        size_t findPaddingLength(const string &data) const;
-        void encryptBlock(string &block, const string &key) const;
-        void swapBytes(string &data, const string &key) const;
-        void removePadding(string &data) const;
+        size_t findPaddingLength(const std::string &data) const;
+        void encryptBlock(std::string &block, const std::string &key) const;
+        void swapBytes(std::string &data, const std::string &key) const;
+        void removePadding(std::string &data) const;
 };
 
 #endif

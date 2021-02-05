@@ -1,4 +1,5 @@
 #include "StreamCipher.h"
+#include <iostream>
 
 using std::ifstream;
 using std::ofstream;
