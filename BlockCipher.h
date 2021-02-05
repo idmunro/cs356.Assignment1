@@ -2,20 +2,23 @@
 #define BLOCKCIPHER_H
 
 #include "Cipher.h"
+#include <algorithm> // swap
 
 class BlockCipher : public Cipher {
-        std::ifstream &keyFile;
+        const std::string key;
         const size_t BLOCKSIZE = 16;
-        const char PAD_CHARACTER = 0x81;
+        const char PAD_CHARACTER = static_cast<char>(0x81);
     public:
-        BlockCipher(std::ifstream &keyFile);
-        void encrypt(std::ifstream &inputFile, std::ofstream &outputFile);
-        void decrypt(std::ifstream &inputFile, std::ofstream &outputFile);
+        BlockCipher(const std::string &keyFileName);
+        void encrypt(const std::string &inputFileName, const std::string &outputFileName) const;
+        void decrypt(const std::string &inputFileName, const std::string &outputFileName) const;
     private:
         size_t findPaddingLength(const std::string &data) const;
+        void addPadding(std::string &data) const;
+        void removePadding(std::string &data) const;
+        void encryptData(std::string &block, const std::string &key) const;
         void encryptBlock(std::string &block, const std::string &key) const;
         void swapBytes(std::string &data, const std::string &key) const;
-        void removePadding(std::string &data) const;
 };
 
 #endif
