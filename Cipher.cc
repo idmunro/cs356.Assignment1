@@ -1,14 +1,12 @@
-
 #include "Cipher.h"
+#include <sstream> // stringstream
 
-#include <fstream>
-#include <string>
+using std::string;
+using std::stringstream;
+using std::ifstream;
 
-Cipher::Cipher(const string &cipherType, const string &key) {
-    if(cipherType == "B") {
-        cipher = new BlockCipher(key);
-    }
-    else {
-        cipher = new StreamCipher(key);
-    }
+string Cipher::fileToString(ifstream &file) {
+    stringstream ss;
+    ss << file.rdbuf();
+    return ss.str();
 }

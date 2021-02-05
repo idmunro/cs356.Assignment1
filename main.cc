@@ -8,32 +8,33 @@
 #include <string> // strings
 #include <memory> // unique_ptr
 
-Cipher* getCipher(const string &cipherType, const ifstream &keyFile);
+Cipher* getCipher(const string &cipherType, ifstream &keyFile);
 void printUsage(char* programName);
 
 using namespace std;
 
-
 int main( int argc, char *argv[] ) {
     if( argc != 6 ) printUsage(argv[0]);
 
+    // Do file validation in Cipher class
+    // Do cipherType and modeOp here in main
     string cipherType = validateArgument<CipherType>(argv[1]);
     ifstream inputFile = validateArgument<InputFile>(argv[2]);
     ofstream outputFile = validateArgument<OutputFile>(argv[3]);
-    string modeOp = validateArgument<ModeOp>(argv[5]);
     ifstream keyFile = validateArgument<KeyFile>(argv[4]);
+    string modeOp = validateArgument<ModeOp>(argv[5]);
 
     unique_ptr<Cipher> cipher(getCipher(cipherType, keyFile));
 
-    if(modeOp == "E") {
-        cipher -> encrypt(inputFile, outputFile);
-    }
-    else {
-        cipher -> decrypt(inputFile, outputFile);
-    }
+    modeOp == "E" ? cipher->encrypt(inputFile, outputFile) 
+                  : cipher->decrypt(inputFile, outputFile);
+
+    inputFile.close();
+    outputFile.close();
+    keyFile.close();
 }
 
-Cipher* getCipher(const string &cipherType, const ifstream &keyFile) {
+Cipher* getCipher(const string &cipherType, ifstream &keyFile) {
     if(cipherType == "B") {
         return new BlockCipher(keyFile);
     }

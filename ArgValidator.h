@@ -19,7 +19,7 @@ auto validateArgument<CipherType>(const char* arg) {
 
     if(argument != "B" && argument != "S")
         throw runtime_error("Cipher Type must be either \"B\" for Block Cipher or \"S\" for Stream Cipher.\n"s
-                            + "You Entered: "s + argument + "\n"s);
+                            + "You Entered: "s + argument + '\n');
 
     return argument;
 }
@@ -30,7 +30,7 @@ auto validateArgument<InputFile>(const char* arg) {
 
     ifstream inputFile(argument, ios_base::binary);
     if( !inputFile ) {
-        throw runtime_error("Input File does not exist.");
+        throw runtime_error("Input File does not exist. File name provided: "s + argument + '\n');
     }
     return inputFile;
 }
@@ -49,8 +49,9 @@ auto validateArgument<KeyFile>(const char* arg) {
 
     ifstream keyFile(argument, ios_base::binary);
     if( !keyFile ) {
-        throw runtime_error("Key File does not exist.");
+        throw runtime_error("Key File does not exist. File name provided: "s + argument + '\n');
     }
+
     return keyFile;
 }
 
@@ -59,7 +60,8 @@ auto validateArgument<ModeOp>(const char* arg) {
     string argument(arg);
 
     if(argument != "E" && argument != "D")
-        throw runtime_error("Mode Of Operation must be either \"E\" for Encrypt or \"D\" for Decrypt.\n");
+        throw runtime_error("Mode Of Operation must be either \"E\" for Encrypt or \"D\" for Decrypt. "
+                            "You Entered: " + argument + '\n');
     return argument;
 }
 

@@ -3,19 +3,19 @@
 
 #include "Cipher.h"
 
-#include <fstream>
-#include <iostream>
-#include <string>
-
-using namespace std;
-
 class BlockCipher : public Cipher {
+        std::ifstream &keyFile;
+        const size_t BLOCKSIZE = 16;
+        const char PAD_CHARACTER = 0x81;
     public:
-        BlockCipher(const ifstream &keyFile);
-        void encrypt(const ifstream &inputFile, ofstream &outputFile);
-        void decrypt(const ifstream &inputFile, ofstream &outputFile);
+        BlockCipher(std::ifstream &keyFile);
+        void encrypt(std::ifstream &inputFile, std::ofstream &outputFile);
+        void decrypt(std::ifstream &inputFile, std::ofstream &outputFile);
     private:
-        const ifstream &keyFile;
+        size_t findPaddingLength(const string &data) const;
+        void encryptBlock(string &block, const string &key) const;
+        void swapBytes(string &data, const string &key) const;
+        void removePadding(string &data) const;
 };
 
 #endif
