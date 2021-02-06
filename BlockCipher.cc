@@ -45,9 +45,10 @@ void BlockCipher::encryptData(string &data, const string &key) const{
 }
 
 void BlockCipher::swapBytes(string &data, const string &key) const{
-    for(size_t f = 0, r = data.size()-1; f < r; ++f, --r) {
+    for(size_t f = 0, r = data.size()-1; f < r; ++f) {
         if(key[f % key.size()] % 2) {
             swap(data[f], data[r]);
+            --r;
         }
     }
 }
