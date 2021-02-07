@@ -11,6 +11,7 @@ void BlockCipher::encrypt(const std::string &inputFileName, const std::string &o
     ifstream inputFile = openInputFile(inputFileName);
     ofstream outputFile = openOutputFile(outputFileName);
     string data = fileToString(inputFile);
+    if(!data.size()) return;
 
     addPadding(data);
     encryptData(data, key);
@@ -23,6 +24,7 @@ void BlockCipher::decrypt(const std::string &inputFileName, const std::string &o
     ifstream inputFile = openInputFile(inputFileName);
     ofstream outputFile = openOutputFile(outputFileName);
     string data = fileToString(inputFile);
+    if(!data.size()) return;
     
     swapBytes(data, key);
     encryptData(data, key);
