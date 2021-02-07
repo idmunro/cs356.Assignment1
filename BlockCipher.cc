@@ -35,7 +35,7 @@ void BlockCipher::decrypt(const std::string &inputFileName, const std::string &o
 
 void BlockCipher::addPadding(string &data) const{
     size_t padLength = findPaddingLength(data);
-    data.insert(data.size(), padLength, PAD_CHARACTER);
+    data.append(padLength, PAD_CHARACTER);
 }
 
 void BlockCipher::encryptData(string &data, const string &key) const{
